@@ -4,7 +4,7 @@ import java.util.Collections;
 
 
 public class Sorter<T extends Comparable<T>> {
-    private Configuration config;
+    private final Configuration config;
     private final FileWorker fileWorker;
 
     public Sorter(Configuration conf) throws IOException {
@@ -18,7 +18,6 @@ public class Sorter<T extends Comparable<T>> {
 
             while (fileWorker.getScannersSize() > 0) {
                 int index = findMinOrMaxIndex(arrayList);
-                String tmp = arrayList.get(index).toString();
                 fileWorker.write(arrayList.get(index).toString() + "\n");
                 T newElem = findNextElem(index, arrayList.get(index));
                 if (newElem != null) {

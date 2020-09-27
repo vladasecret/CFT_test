@@ -23,8 +23,7 @@ public class FileWorker implements AutoCloseable {
         try {
             Files.createFile(outputFile);
         }
-        catch (FileAlreadyExistsException exc) {
-            System.out.format("File \"%s\" already exists", exc.getLocalizedMessage());
+        catch (FileAlreadyExistsException ignored) {
         }
         writer = Files.newBufferedWriter(outputFile);
     }

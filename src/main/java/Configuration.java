@@ -34,14 +34,9 @@ public class Configuration {
         String key = keys.get(0);
         if (keys.size() == 2) {
             switch (key) {
-                case "-a":
-                    ascending = true;
-                    break;
-                case "-d":
-                    ascending = false;
-                    break;
-                default:
-                    throw new IllegalArgumentException("When you enter 2 keys, the first key have to be -a or -d, the second -i or -s");
+                case "-a" -> ascending = true;
+                case "-d" -> ascending = false;
+                default -> throw new IllegalArgumentException("When you enter 2 keys, the first key have to be -a or -d, the second -i or -s");
             }
             key = keys.get(1);
         }
@@ -49,19 +44,20 @@ public class Configuration {
             ascending = true;
         }
         switch (key) {
-            case "-i":
+            case "-i" -> {
                 type = 'i';
                 castFunction = Integer::parseInt;
-                break;
-            case "-s":
+            }
+            case "-s" -> {
                 type = 's';
                 castFunction = x -> x;
-                break;
-            default:
+            }
+            default -> {
                 if (keys.size() == 1)
                     throw new IllegalArgumentException("When you enter just 1 key it have to be -s or -i");
                 else
                     throw new IllegalArgumentException("When you enter 2 keys, the first key have to be -a or -d, the second -i or -s");
+            }
         }
         outFile = Paths.get(fileNames.get(0));
         fileNames.remove(0);
