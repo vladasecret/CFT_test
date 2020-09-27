@@ -10,7 +10,7 @@ public class Main {
                 new Sorter<String>(config).merge();
         }
         catch (Exception exc){
-            System.out.println(exc.getLocalizedMessage());
+            System.out.println("Can't execute the program: " + exc.getLocalizedMessage());
         }
     }
 }
