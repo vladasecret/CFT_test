@@ -11,10 +11,11 @@ public class FileWorker implements AutoCloseable {
     private Writer writer;
 
     public FileWorker(Path outputFile, ArrayList<Path> inputFiles) throws IOException {
-        for (int i = 0; i < inputFiles.size(); ++i) {
+        for (Path inputFile : inputFiles) {
             try {
-                if (Files.isReadable(inputFiles.get(i)))
-                    scanners.add(new Scanner(inputFiles.get(i)));
+
+                if (Files.isReadable(inputFile))
+                    scanners.add(new Scanner(inputFile).useDelimiter("\\n"));
             } catch (IOException ignored) {
             }
 
@@ -22,7 +23,9 @@ public class FileWorker implements AutoCloseable {
         try {
             Files.createFile(outputFile);
         }
-        catch (FileAlreadyExistsException ignored) {};
+        catch (FileAlreadyExistsException exc) {
+            System.out.format("File \"%s\" already exists", exc.getLocalizedMessage());
+        }
         writer = Files.newBufferedWriter(outputFile);
     }
 

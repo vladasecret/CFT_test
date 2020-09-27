@@ -5,20 +5,20 @@ import java.util.ArrayList;
 import java.util.function.Function;
 
 public class Configuration {
-    private Class elemType;
-    private final Function<String,Comparable<?>> castFunction;
+    private final char type;
+    private final Function<String, Comparable<?>> castFunction;
     private boolean ascending;
     private Path outFile;
-    private ArrayList<Path> inputFiles = new ArrayList<>();
+    private final ArrayList<Path> inputFiles = new ArrayList<>();
 
     public Configuration(String[] args) {
         ArrayList<String> keys = new ArrayList<>();
         ArrayList<String> fileNames = new ArrayList<>();
 
-        for (int i = 0; i < args.length; ++i){
-            if (args[i].startsWith("-"))
-                keys.add(args[i]);
-            else fileNames.add(args[i]);
+        for (String arg : args) {
+            if (arg.startsWith("-"))
+                keys.add(arg);
+            else fileNames.add(arg);
         }
 
         if (keys.contains("-a") && keys.contains("-d"))
@@ -32,52 +32,48 @@ public class Configuration {
 
 
         String key = keys.get(0);
-        if (keys.size() == 2){
-            switch (key){
-                case "-a"->{
+        if (keys.size() == 2) {
+            switch (key) {
+                case "-a":
                     ascending = true;
                     break;
-                }
-                case  "-d" ->{
+                case "-d":
                     ascending = false;
                     break;
-                }
-                default -> {
-                    throw new IllegalArgumentException("When you enter 2 keys, the first key have to be -a or -d");
-                }
+                default:
+                    throw new IllegalArgumentException("When you enter 2 keys, the first key have to be -a or -d, the second -i or -s");
             }
             key = keys.get(1);
         }
-        if (keys.size() == 1){
+        if (keys.size() == 1) {
             ascending = true;
         }
-        switch (key){
-            case "-i"->{
-                elemType = Integer.class;
+        switch (key) {
+            case "-i":
+                type = 'i';
                 castFunction = Integer::parseInt;
                 break;
-            }
-            case  "-s"->{
-                elemType = String.class;
+            case "-s":
+                type = 's';
                 castFunction = x -> x;
                 break;
-            }
-            default ->{
-                throw new IllegalArgumentException("When you enter just 1 key it have to be -s or -i");
-            }
+            default:
+                if (keys.size() == 1)
+                    throw new IllegalArgumentException("When you enter just 1 key it have to be -s or -i");
+                else
+                    throw new IllegalArgumentException("When you enter 2 keys, the first key have to be -a or -d, the second -i or -s");
         }
         outFile = Paths.get(fileNames.get(0));
         fileNames.remove(0);
 
-        for (String fileName : fileNames){
+        for (String fileName : fileNames) {
             Path tmp = Paths.get(fileName);
-            if (Files.exists(tmp) && Files.isRegularFile(tmp)){
+            if (Files.exists(tmp) && Files.isReadable(tmp) && Files.isRegularFile(tmp)) {
                 inputFiles.add(tmp);
-            }
-            else System.err.format("File \"%s\" does not exist. This file will be ignored.\n", fileName);
+            } else System.out.format("File \"%s\" does not exist or is not readable. It will be ignored.\n", fileName);
         }
         if (inputFiles.size() < 1)
-            throw new IllegalArgumentException("No existing input files");
+            throw new IllegalArgumentException("No existing or readable input files");
 
     }
 
@@ -85,8 +81,8 @@ public class Configuration {
         return inputFiles;
     }
 
-    public Class getElemType() {
-        return elemType;
+    public char getType() {
+        return type;
     }
 
     public Path getOutFile() {
@@ -96,11 +92,13 @@ public class Configuration {
     public boolean isAscending() {
         return ascending;
     }
-    public int signAscending(){
-        return  (ascending) ? -1 : 1;
+
+    public int signAscending() {
+        return (ascending) ? -1 : 1;
 
     }
-    public Function<String,Comparable <?>> getCastFunction(){
+
+    public Function<String, Comparable<?>> getCastFunction() {
         return castFunction;
     }
 }

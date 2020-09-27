@@ -18,6 +18,7 @@ public class Sorter<T extends Comparable<T>> {
 
             while (fileWorker.getScannersSize() > 0) {
                 int index = findMinOrMaxIndex(arrayList);
+                String tmp = arrayList.get(index).toString();
                 fileWorker.write(arrayList.get(index).toString() + "\n");
                 T newElem = findNextElem(index, arrayList.get(index));
                 if (newElem != null) {
@@ -55,7 +56,7 @@ public class Sorter<T extends Comparable<T>> {
     private T findNextElem(int index, T elem) {
         T newElem = elem;
         int cmp = -config.signAscending();
-        while (newElem != null && Math.signum(cmp) != config.signAscending()) {
+        while (newElem != null && Math.signum(cmp) != config.signAscending() && cmp != 0) {
             try {
                 newElem = (T) config.getCastFunction().apply(fileWorker.getNextElem(index));
             } catch (NumberFormatException exception) {
